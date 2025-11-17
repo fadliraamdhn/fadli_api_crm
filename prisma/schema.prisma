@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ROLE {
+  Sales
+  Manager
+}
+
+model User {
+  id        Int        @id @default(autoincrement())
+  username  String     @unique
+  password  String
+  role      ROLE
+  leads     Lead[]
+  customers Customer[]
+  projects  Project[]
+  createdAt DateTime   @default(now())
+}
+
+enum LEAD_STATUS {
+  New
+  InProgress
+  Converted
+  Closed
+}
+
+model Lead {
+  id        Int         @id @default(autoincrement())
+  name      String
+  contact   String
+  address   String
+  need      String
+  status    LEAD_STATUS @default(New)
+  salesId   Int
+  sales     User        @relation(fields: [salesId], references: [id])
+  projects  Project[]
+  createdAt DateTime    @default(now())
+}
+
+model Product {
+  id           Int               @id @default(autoincrement())
+  name         String
+  hpp          Int
+  marginSales  Int
+  sellingPrice Int
+  dealProducts DealProduct[]
+  services     CustomerService[]
+  createdAt    DateTime          @default(now())
+}
+
+enum PROJECT_STATUS {
+  waiting_approval
+  approved
+  rejected
+}
+
+model Project {
+  id     Int  @id @default(autoincrement())
+  leadId Int
+  lead   Lead @relation(fields: [leadId], references: [id])
+
+  salesId Int
+  sales   User @relation(fields: [salesId], references: [id])
+
+  status    PROJECT_STATUS @default(waiting_approval)
+  createdAt DateTime       @default(now())
+
+  products DealProduct[]
+  services CustomerService[]
+}
+
+model DealProduct {
+  id              Int @id @default(autoincrement())
+  projectId       Int
+  productId       Int
+  negotiatedPrice Int
+
+  project Project @relation(fields: [projectId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model Customer {
+  id      Int    @id @default(autoincrement())
+  name    String
+  contact String
+  address String
+
+  salesId Int
+  sales   User @relation(fields: [salesId], references: [id])
+
+  services  CustomerService[]
+  createdAt DateTime          @default(now())
+}
+
+model CustomerService {
+  id         Int @id @default(autoincrement())
+  customerId Int
+  productId  Int
+  projectId  Int
+
+  customer Customer @relation(fields: [customerId], references: [id])
+  product  Product  @relation(fields: [productId], references: [id])
+  project  Project  @relation(fields: [projectId], references: [id])
+
+  createdAt DateTime @default(now())
+}

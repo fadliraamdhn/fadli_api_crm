@@ -15,7 +15,8 @@
   "scripts": {
     "dev": "bun run --watch src/index.ts",
     "build": "bun build src/index.ts --outdir dist --target bun",
-    "start": "bun dist/index.js"
+    "start": "bun dist/index.js",
+    "seed": "bun src/prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.0",
