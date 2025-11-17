@@ -1,11 +1,22 @@
 import express from "express";
+import dotenv from "dotenv";
+import authRoute from "~/routes";
+import { logger } from "~/middlewares/logger";
+import { errorMiddleware } from "~/middlewares/error.middleware";
+
+dotenv.config();
 
 const app = express();
+const port = process.env.PORT;
 
-app.get("/", (req, res) => {
-  res.send("CRM API running with Bun + Express");
-});
+app.use(express.json());
 
-app.listen(3000, () => {
-  console.log("Server running at http://localhost:3000");
+app.use(logger);
+
+app.use("/crm-api", authRoute);
+
+app.use(errorMiddleware);
+
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
 });
