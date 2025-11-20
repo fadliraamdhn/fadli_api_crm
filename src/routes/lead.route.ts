@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { handleCreateLead, handleDeleteLead, handleUpdateLead, hanleGetLeads } from "~/controllers/lead.controller";
+import { handleConvertLead, handleCreateLead, handleDeleteLead, handleUpdateLead, hanleGetLeads } from "~/controllers/lead.controller";
 import { authMiddleware } from "~/middlewares/auth.middleware";
 import { authorize } from "~/middlewares/role.middleware";
 
@@ -13,5 +13,6 @@ router.post("/create-lead", handleCreateLead);
 router.patch("/update-lead/:id", handleUpdateLead);
 router.delete("/delete-lead/:id", handleDeleteLead);
 
+router.post("/convert-lead/:id", handleConvertLead);
 
 export default router;
