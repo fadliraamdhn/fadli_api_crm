@@ -2,15 +2,24 @@ import { LEAD_STATUS, PROJECT_STATUS } from "~/generated/prisma/enums";
 import { prisma } from "~/prisma/prisma.client";
 import { AppError } from "~/utils/appError";
 
-export const getAllLeads = async (userId: number, role: "Sales" | "Manager", page = 1, limit = 10, status?: LEAD_STATUS) => {
+export const getAllLeads = async (userId: number, role: "Sales" | "Manager", status?: LEAD_STATUS, search?: string) => {
     const leads = await prisma.lead.findMany({
-        where: role === "Sales" ? { salesId: userId } : {},
+        where: {
+            ...(role === "Sales" ? { salesId: userId } : {}),
+            ...(status ? { status } : {}),
+            ...(search
+                ? {
+                      name: {
+                          contains: search,
+                          mode: "insensitive",
+                      },
+                  }
+                : {}),
+        },
         orderBy: { createdAt: "desc" },
-        skip: (page - 1) * limit,
-        take: limit,
     });
 
-    return leads
+    return leads;
 };
 
 export const createLead = async ( userId: number, role: "Sales" | "Manager", data: { name: string; contact: string; address: string; need: string; status?: LEAD_STATUS}) => {

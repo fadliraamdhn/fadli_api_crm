@@ -1,15 +1,24 @@
 import { prisma } from "~/prisma/prisma.client";
 
-export const getAllCustomersWithServices = async (salesId: number, role: string) => {
-    const where = role === "Sales" ? { salesId: salesId } : {};
+export const getAllCustomersWithServices = async (
+    salesId: number,
+    role: string,
+    search?: string
+) => {
+    const where: any = role === "Sales" ? { salesId } : {};
+
+    if (search) {
+        where.name = {
+            contains: search,
+            mode: "insensitive",
+        };
+    }
 
     const customers = await prisma.customer.findMany({
         where,
         include: {
             sales: {
-              select: {
-                username: true
-              }  
+                select: { username: true }
             },
             customerService: {
                 include: {
@@ -18,9 +27,7 @@ export const getAllCustomersWithServices = async (salesId: number, role: string)
                 },
             },
         },
-        orderBy: {
-            createdAt: "desc",
-        },
+        orderBy: { createdAt: "desc" },
     });
 
     return customers;

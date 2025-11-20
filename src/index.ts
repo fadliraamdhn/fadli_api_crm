@@ -9,8 +9,11 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT;
+const allowedOrigins = process.env.CORS_ORIGIN?.split(",") || [];
 
-app.use(cors());
+app.use(cors({
+    origin: allowedOrigins
+}));
 
 app.use(express.json());
 

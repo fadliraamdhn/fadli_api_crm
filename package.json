@@ -13,14 +13,17 @@
   "peerDependencies": {
     "typescript": "^5.9.3"
   },
+  "prisma": {
+    "schema": "./prisma"
+  },
   "scripts": {
     "dev": "bun run --watch src/index.ts",
-    "build": "bun build src/index.ts --outdir dist --target bun",
-    "start": "bun dist/index.js",
+    "start": "bun run src/index.ts",
     "seed": "bun src/prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.0",
+    "@prisma/config": "^7.0.0",
     "@types/morgan": "^1.9.10",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",

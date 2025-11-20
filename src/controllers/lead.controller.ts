@@ -2,12 +2,19 @@ import { Request, Response, NextFunction } from "express";
 import { LEAD_STATUS } from "~/generated/prisma/enums";
 import { convertLead, createLead, deleteLead, getAllLeads, updateLead } from "~/services/leads.service";
 
-export const hanleGetLeads = async (req: Request, res: Response, next: NextFunction) => {
+export const handleGetLeads = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        const { page, limit, status, search } = req.query;
         const user = (req as any).user;
-        const leads = await getAllLeads(user.id, user.role);
 
-        res.status(200).json({
+        const leads = await getAllLeads(
+            user.id,
+            user.role,
+            status as LEAD_STATUS,
+            search as string
+        );
+
+        return res.status(200).json({
             status: "success",
             code: 200,
             data: leads,
