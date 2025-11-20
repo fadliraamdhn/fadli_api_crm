@@ -2,7 +2,7 @@ import { prisma } from "~/prisma/prisma.client";
 import bcrypt from "bcryptjs";
 
 // untuk membuat akun baru
-const username:string = "sales1"
+const username:string = "sales3"
 const userpass:string =  "123456"
 
 async function addNewUser() {
@@ -14,7 +14,7 @@ async function addNewUser() {
         create: {
             username,
             password: hash,
-            role: "Manager"
+            role: "Sales"
         }
     })
 
