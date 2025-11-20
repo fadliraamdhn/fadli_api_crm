@@ -2,11 +2,10 @@ FROM oven/bun:latest
 WORKDIR /app
 
 COPY package.json bun.lock ./
-
 RUN bun install --frozen-lockfile
-
 COPY . .
 
-EXPOSE 3030
+RUN bunx prisma generate
 
-CMD ["bun", "run", "dev", "--host", "0.0.0.0"]
+EXPOSE 3000
+CMD ["bun", "run", "start", "--host", "0.0.0.0"]
