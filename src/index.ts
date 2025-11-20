@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors"
 import authRoute from "~/routes";
 import { logger } from "~/middlewares/logger";
 import { errorMiddleware } from "~/middlewares/error.middleware";
