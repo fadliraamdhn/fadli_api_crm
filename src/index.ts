@@ -8,7 +8,7 @@ import cors from "cors"
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT;
+const port = Number(process.env.PORT)
 const allowedCors = process.env.CORS_ORIGIN
 
 app.use(cors({
@@ -23,6 +23,6 @@ app.use("/crm-api", authRoute);
 
 app.use(errorMiddleware);
 
-app.listen(port, () => {
+app.listen(port, "0.0.0.0", () => {
     console.log(`Server running at http://localhost:${port}`);
 });
