@@ -1,19 +1,19 @@
 import express from "express";
 import dotenv from "dotenv";
-import cors from "cors"
 import authRoute from "~/routes";
 import { logger } from "~/middlewares/logger";
 import { errorMiddleware } from "~/middlewares/error.middleware";
+import cors from "cors"
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT;
-const allowedOrigins = process.env.CORS_ORIGIN?.split(",") || [];
+const allowedCors = process.env.CORS_ORIGIN
 
 app.use(cors({
-    origin: allowedOrigins
-}));
+    origin: allowedCors
+}))
 
 app.use(express.json());
 
