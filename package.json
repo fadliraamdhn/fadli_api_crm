@@ -6,20 +6,24 @@
   "devDependencies": {
     "@types/bcryptjs": "^3.0.0",
     "@types/bun": "latest",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",
     "@types/jsonwebtoken": "^9.0.10"
   },
   "peerDependencies": {
     "typescript": "^5.9.3"
   },
+  "prisma": {
+    "schema": "./prisma"
+  },
   "scripts": {
     "dev": "bun run --watch src/index.ts",
-    "start": "bun run dist/index.js",
-    "build": "bun build src/index.ts --outdir dist",
-    "seed": "bun run src/prisma/seed.ts"
+    "start": "bun run src/index.ts",
+    "seed": "bun src/prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.0",
+    "@prisma/config": "^7.0.0",
     "@types/morgan": "^1.9.10",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",

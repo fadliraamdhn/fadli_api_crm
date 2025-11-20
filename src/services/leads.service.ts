@@ -1,16 +1,25 @@
-import { LEAD_STATUS } from "~/generated/prisma/enums";
+import { LEAD_STATUS, PROJECT_STATUS } from "~/generated/prisma/enums";
 import { prisma } from "~/prisma/prisma.client";
 import { AppError } from "~/utils/appError";
 
-export const getAllLeads = async (userId: number, role: "Sales" | "Manager", page = 1, limit = 10, status?: LEAD_STATUS) => {
+export const getAllLeads = async (userId: number, role: "Sales" | "Manager", status?: LEAD_STATUS, search?: string) => {
     const leads = await prisma.lead.findMany({
-        where: role === "Sales" ? { salesId: userId } : {},
+        where: {
+            ...(role === "Sales" ? { salesId: userId } : {}),
+            ...(status ? { status } : {}),
+            ...(search
+                ? {
+                      name: {
+                          contains: search,
+                          mode: "insensitive",
+                      },
+                  }
+                : {}),
+        },
         orderBy: { createdAt: "desc" },
-        skip: (page - 1) * limit,
-        take: limit,
     });
 
-    return leads
+    return leads;
 };
 
 export const createLead = async ( userId: number, role: "Sales" | "Manager", data: { name: string; contact: string; address: string; need: string; status?: LEAD_STATUS}) => {
@@ -51,13 +60,40 @@ export const updateLead = async ( userId: number, role: "Sales" | "Manager", lea
 
 export const deleteLead = async ( userId: number, role: "Sales" | "Manager", leadId: number ) => {
     const lead = await prisma.lead.findUnique({ where: { id: leadId } });
-    if (!lead) throw new AppError("Lead tidak ditemukan");
+    if (!lead) throw new AppError("Lead tidak ditemukan", 404);
 
     if (role === "Sales" && lead.salesId !== userId) {
-        throw new AppError("Anda tidak memiliki akses untuk menghapus lead ini");
+        throw new AppError("Anda tidak memiliki akses untuk menghapus lead ini", 403);
     }
 
     await prisma.lead.delete({ where: { id: leadId } });
 
     return true;
 };
+
+export const convertLead = async (userId: number,  role: "Sales" | "Manager", leadId: number ) => {
+    const lead = await prisma.lead.findUnique({
+        where: { id: leadId }
+    })
+
+    if(!lead) throw new AppError('Lead tidak ditemukan', 404)
+
+    if (role === "Sales" && lead.salesId !== userId) {
+        throw new AppError("Anda tidak memiliki akses untuk mengconvert lead ini");
+    }
+
+    const project = await prisma.project.create({
+    data: {
+        salesId: lead.salesId,
+        leadId: lead.id,
+        status: PROJECT_STATUS.approval
+        },
+    });
+
+    await prisma.lead.update({
+        where: { id: leadId },
+        data: { status: LEAD_STATUS.Converted }
+    })
+
+    return project
+}
