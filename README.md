@@ -27,4 +27,4 @@ projek ini bisa di deploy melalui railway.
 * buat service di railway
 * pilih repository
 * pilih branch dev
-* di railway pilih dockerfile yanag disiapkan pada projek ini agar berjalan dengan lancar
+* pilih dockerfile yang disiapkan pada projek ini agar berjalan dengan lancar
